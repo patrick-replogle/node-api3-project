@@ -26,12 +26,11 @@ router.post("/", validateUser(), (req, res) => {
 
 //post a new post to for a specific user
 router.post("/:id/posts", validatePost(), validateUserId(), (req, res) => {
-  // do your magic!
-  const body = {
+  const newPost = {
     text: req.body.text,
     user_id: req.params.id
   };
-  Posts.insert(body)
+  Posts.insert(newPost)
     .then(post => {
       res.status(201).json(post);
     })

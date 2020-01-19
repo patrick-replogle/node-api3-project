@@ -1,5 +1,6 @@
 const express = require("express");
 const Users = require("./userDb.js");
+const Posts = require("../posts/postDb.js");
 //custom middleware imports
 const {
   validatePost,
@@ -9,8 +10,8 @@ const {
 
 const router = express.Router();
 
-router.post("/", validatePost(), (req, res) => {
-  // do your magic!
+//post a new user
+router.post("/", validateUser(), (req, res) => {
   Users.insert(req.body)
     .then(user => {
       res.status(201).json(user);
@@ -23,13 +24,27 @@ router.post("/", validatePost(), (req, res) => {
     });
 });
 
-router.post("/:id/posts", validateUser(), validateUserId(), (req, res) => {
+//post a new post to for a specific user
+router.post("/:id/posts", validatePost(), validateUserId(), (req, res) => {
   // do your magic!
-  //should this be in the postRouter?
+  const body = {
+    text: req.body.text,
+    user_id: req.params.id
+  };
+  Posts.insert(body)
+    .then(post => {
+      res.status(201).json(post);
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        error: "Post could not be added at this time"
+      });
+    });
 });
 
+//get all the users
 router.get("/", (req, res) => {
-  // do your magic!
   Users.get()
     .then(users => {
       res.status(200).json(users);
@@ -42,27 +57,44 @@ router.get("/", (req, res) => {
     });
 });
 
+//get user by id
 router.get("/:id", validateUserId(), (req, res) => {
   // do your magic!
   res.json(req.user);
 });
 
-router.get("/:id/posts", (req, res) => {
-  // do your magic!
+//get a specific user's posts
+router.get("/:id/posts", validateUserId(), (req, res) => {
+  Users.getUserPosts(req.params.id)
+    .then(posts => {
+      if (posts.length > 0) {
+        res.status(200).json(posts);
+      } else {
+        res.status(404).json({
+          message: "The specified user does not have any posts at this time"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        error: "Can't retrieve user posts at this time"
+      });
+    });
 });
 
+//delete a user
 router.delete("/:id", validateUserId(), (req, res) => {
-  // do your magic!
   Users.remove(req.params.id).then(user => {
     res.status(200).json({ message: "This user has been destroyed" });
   });
 });
 
+//update a user
 router.put("/:id", validateUser(), validateUserId(), (req, res) => {
-  // do your magic!
   Users.update(req.params.id, req.body)
-    .then(user => {
-      res.status(200).json(user);
+    .then(() => {
+      Users.getById(req.params.id).then(user => res.json(user));
     })
     .catch(err => {
       res.status(500).json({
@@ -71,19 +103,5 @@ router.put("/:id", validateUser(), validateUserId(), (req, res) => {
       });
     });
 });
-
-//custom middleware
-
-// function validateUserId(req, res, next) {
-//   // do your magic!
-// }
-
-// function validateUser(req, res, next) {
-//   // do your magic!
-// }
-
-// function validatePost(req, res, next) {
-//   // do your magic!
-// }
 
 module.exports = router;

@@ -1,5 +1,8 @@
 const express = require("express");
+const helmet = require("helmet");
+const userRouter = require("./users/userRouter.js");
 const { logger } = require("./middleware/logger.js");
+
 const server = express();
 
 server.get("/", (req, res) => {
@@ -7,6 +10,9 @@ server.get("/", (req, res) => {
 });
 
 //custom middleware
+server.use(helmet());
 server.use(logger);
+
+server.use("/api/users", userRouter);
 
 module.exports = server;

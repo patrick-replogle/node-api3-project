@@ -1,5 +1,6 @@
 const express = require("express");
-const user = require("./userDb.js");
+const Users = require("./userDb.js");
+//custom middleware imports
 const {
   validatePost,
   validateUserId,
@@ -8,32 +9,67 @@ const {
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
+router.post("/", validatePost(), (req, res) => {
   // do your magic!
+  Users.insert(req.body)
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        error: "User could not be added at this time"
+      });
+    });
 });
 
-router.post("/:id/posts", (req, res) => {
+router.post("/:id/posts", validateUser(), validateUserId(), (req, res) => {
   // do your magic!
+  //should this be in the postRouter?
 });
 
 router.get("/", (req, res) => {
   // do your magic!
+  Users.get()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        error: "The users information could not be retrieved"
+      });
+    });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validateUserId(), (req, res) => {
   // do your magic!
+  res.json(req.user);
 });
 
 router.get("/:id/posts", (req, res) => {
   // do your magic!
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validateUserId(), (req, res) => {
   // do your magic!
+  Users.remove(req.params.id).then(user => {
+    res.status(200).json({ message: "This user has been destroyed" });
+  });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validateUser(), validateUserId(), (req, res) => {
   // do your magic!
+  Users.update(req.params.id, req.body)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(err => {
+      res.status(500).json({
+        success: false,
+        error: "User could not be updated at this time"
+      });
+    });
 });
 
 //custom middleware

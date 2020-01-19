@@ -5,7 +5,7 @@ function validateUserId(req, res, next) {
   return (req, res, next) => {
     user.getById(req.params.id).then(user => {
       if (user) {
-        res.status(200).json(user);
+        req.user = user;
         next();
       } else {
         res.status(400).json({

@@ -1,7 +1,7 @@
 const express = require("express");
 const Users = require("./userDb.js");
 const Posts = require("../posts/postDb.js");
-//custom middleware imports
+
 const {
   validatePost,
   validateUserId,

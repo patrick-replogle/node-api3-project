@@ -58,7 +58,6 @@ router.get("/", (req, res) => {
 
 //get user by id
 router.get("/:id", validateUserId(), (req, res) => {
-  // do your magic!
   res.json(req.user);
 });
 

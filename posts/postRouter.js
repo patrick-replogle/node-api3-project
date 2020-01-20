@@ -23,7 +23,7 @@ router.get("/:id", validatePostId(), (req, res) => {
 
 router.delete("/:id", validatePostId(), (req, res) => {
   Posts.remove(req.params.id)
-    .then(response => {
+    .then(() => {
       res.status(200).json({ message: "This post has been nuked" });
     })
     .catch(err => {

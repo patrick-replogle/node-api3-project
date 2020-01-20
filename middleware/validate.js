@@ -1,6 +1,6 @@
 const user = require("../users/userDb");
 
-function validateUserId(req, res, next) {
+function validateUserId() {
   return (req, res, next) => {
     user.getById(req.params.id).then(user => {
       if (user) {
@@ -15,7 +15,7 @@ function validateUserId(req, res, next) {
   };
 }
 
-function validateUser(req, res, next) {
+function validateUser() {
   return (req, res, next) => {
     if (!req.body) {
       return res.status(400).json({
@@ -30,7 +30,7 @@ function validateUser(req, res, next) {
   };
 }
 
-function validatePost(req, res, next) {
+function validatePost() {
   return (req, res, next) => {
     const body = req.body;
     if (!body) {

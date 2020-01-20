@@ -17,11 +17,11 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", validatePostId(), (req, res) => {
+router.get("/:id", validatePostId, (req, res) => {
   res.json(req.post);
 });
 
-router.delete("/:id", validatePostId(), (req, res) => {
+router.delete("/:id", validatePostId, (req, res) => {
   Posts.remove(req.params.id)
     .then(() => {
       res.status(200).json({ message: "This post has been nuked" });
@@ -34,7 +34,7 @@ router.delete("/:id", validatePostId(), (req, res) => {
     });
 });
 
-router.put("/:id", validatePost(), validatePostId(), (req, res) => {
+router.put("/:id", validatePost(), validatePostId, (req, res) => {
   Posts.update(req.params.id, req.body)
     .then(() => {
       // res.status(200).json(post);
@@ -51,18 +51,16 @@ router.put("/:id", validatePost(), validatePostId(), (req, res) => {
 // custom middleware
 
 function validatePostId(req, res, next) {
-  return (req, res, next) => {
-    Posts.getById(req.params.id).then(post => {
-      if (post) {
-        req.post = post;
-        next();
-      } else {
-        res.status(400).json({
-          message: "Invalid post id"
-        });
-      }
-    });
-  };
+  Posts.getById(req.params.id).then(post => {
+    if (post) {
+      req.post = post;
+      next();
+    } else {
+      res.status(400).json({
+        message: "Invalid post id"
+      });
+    }
+  });
 }
 
 module.exports = router;

@@ -49,12 +49,6 @@ class MainPage extends React.Component {
     this.fetchData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.itemToEdit !== this.props.itemToEdit) {
-      return this.props.itemToEdit;
-    }
-  }
-
   render() {
     return (
       <div>
@@ -66,6 +60,7 @@ class MainPage extends React.Component {
           fetchData={this.fetchData}
           addUser={this.addUser}
           updateUser={this.updateUser}
+          cancelEdit={this.props.cancelEdit}
         />
         <Users users={this.state.users} />
       </div>

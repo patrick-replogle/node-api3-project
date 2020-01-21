@@ -1,65 +1,82 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import axios from "axios";
-import { withRouter } from "react-router-dom";
 
-const UserCard = props => {
-  const [user, setUser] = useState({});
-  const [posts, setPosts] = useState([]);
+class UserCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {},
+      posts: []
+    };
+  }
 
-  const id = props.match.params.id;
-  useEffect(() => {
+  fetchUser = id => {
     axios
       .get(`http://localhost:4000/api/users/${id}`)
       .then(res => {
-        setUser(res.data);
+        this.setState({ user: res.data });
       })
       .catch(err => {
         console.log("Error fetching user: ", err);
       });
-  }, [id]);
+  };
 
-  useEffect(() => {
+  fetchPosts = id => {
     axios
       .get(`http://localhost:4000/api/users/${id}/posts`)
       .then(res => {
-        setPosts(res.data);
+        this.setState({ posts: res.data });
       })
       .catch(err => {
         console.log("Error fetching posts: ", err);
       });
-  });
+  };
 
-  const deleteUser = id => {
+  deleteUser = id => {
     axios
       .delete(`http://localhost:4000/api/users/${id}`)
       .then(() => {
-        props.history.push("/");
+        this.props.history.push("/");
       })
       .catch(err => {
         console.log("Error deleting: ", err);
       });
   };
 
-  return (
-    <div>
-      <p>{user.name}</p>
-      {posts
-        ? posts.map(post => {
-            return <p>{post.text}</p>;
-          })
-        : ""}{" "}
-      <button
-        onClick={() => {
-          props.toggleEdit(user);
-          console.log(props.itemToEdit);
-          props.history.push("/");
-        }}
-      >
-        Edit
-      </button>
-      <button onClick={() => deleteUser(user.id)}>Delete</button>
-    </div>
-  );
-};
+  componentDidMount() {
+    this.fetchUser(this.props.match.params.id);
+    this.fetchPosts(this.props.match.params.id);
+  }
 
-export default withRouter(UserCard);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.fetchUser(this.props.match.params.id);
+      this.fetchPosts(this.props.match.params.id);
+    }
+  }
+  render() {
+    return (
+      <div>
+        <p>Username: {this.state.user.name}</p>
+        {this.state.posts
+          ? this.state.posts.map(post => {
+              return <p key={post.id}>{post.text}</p>;
+            })
+          : ""}
+        <button
+          onClick={() => {
+            this.props.toggleEdit(this.state.user);
+            this.props.history.push("/");
+          }}
+        >
+          Edit
+        </button>
+        <button onClick={() => this.deleteUser(this.state.user.id)}>
+          Delete
+        </button>
+      </div>
+    );
+  }
+}
+
+export default UserCard;

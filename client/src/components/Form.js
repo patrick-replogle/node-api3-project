@@ -8,6 +8,17 @@ class Form extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.itemToEdit !== this.props.itemToEdit &&
+      this.props.isEditing === true
+    ) {
+      this.setState({
+        name: this.props.itemToEdit.name
+      });
+    }
+  }
+
   handleChange = e => {
     this.setState({
       name: e.target.value
@@ -22,6 +33,7 @@ class Form extends React.Component {
         this.setState({
           name: ""
         });
+        this.props.cancelEdit();
       } else {
         this.props.addUser(this.state);
         this.setState({
@@ -31,17 +43,6 @@ class Form extends React.Component {
     }
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.itemToEdit !== this.props.itemToEdit &&
-      this.props.isEditing === true
-    ) {
-      this.setState({
-        name: this.props.itemToEdit.name
-      });
-    }
-  }
-
   render() {
     return (
       <div>
@@ -49,7 +50,8 @@ class Form extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <input
             value={this.state.name}
-            type=""
+            type="text"
+            name="name"
             onChange={this.handleChange}
             placeholder="name"
           />

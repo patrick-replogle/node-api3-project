@@ -13,10 +13,17 @@ class App extends React.Component {
     };
   }
 
-  toggleEdit = user => {
+  toggleEdit = item => {
     this.setState({
       isEditing: true,
-      itemToEdit: user
+      itemToEdit: item
+    });
+  };
+
+  cancelEdit = () => {
+    this.setState({
+      isEditing: false,
+      itemToEdit: {}
     });
   };
   render() {
@@ -31,6 +38,7 @@ class App extends React.Component {
                 {...props}
                 isEditing={this.state.isEditing}
                 itemToEdit={this.state.itemToEdit}
+                cancelEdit={this.cancelEdit}
               />
             );
           }}

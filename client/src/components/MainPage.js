@@ -4,8 +4,8 @@ import Form from "./Form";
 import axios from "axios";
 
 class MainPage extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       users: []
     };
@@ -47,6 +47,12 @@ class MainPage extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.itemToEdit !== this.props.itemToEdit) {
+      return this.props.itemToEdit;
+    }
   }
 
   render() {

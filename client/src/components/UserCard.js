@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 
 const UserCard = props => {
   const [user, setUser] = useState({});
+  const [posts, setPosts] = useState([]);
 
   const id = props.match.params.id;
   useEffect(() => {
@@ -16,6 +17,17 @@ const UserCard = props => {
         console.log("Error fetching user: ", err);
       });
   }, [id]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:4000/api/users/${id}/posts`)
+      .then(res => {
+        setPosts(res.data);
+      })
+      .catch(err => {
+        console.log("Error fetching posts: ", err);
+      });
+  });
 
   const deleteUser = id => {
     axios
@@ -31,10 +43,15 @@ const UserCard = props => {
   return (
     <div>
       <p>{user.name}</p>
+      {posts
+        ? posts.map(post => {
+            return <p>{post.text}</p>;
+          })
+        : ""}{" "}
       <button
         onClick={() => {
           props.toggleEdit(user);
-          console.log(user);
+          console.log(props.itemToEdit);
           props.history.push("/");
         }}
       >

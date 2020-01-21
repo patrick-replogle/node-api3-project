@@ -8,11 +8,8 @@ class Form extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.itemToEdit !== this.props.itemToEdit &&
-      this.props.isEditing === true
-    ) {
+  componentDidMount() {
+    if (this.props.isEditing && this.props.itemToEdit !== {}) {
       this.setState({
         name: this.props.itemToEdit.name
       });

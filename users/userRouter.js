@@ -11,7 +11,7 @@ const {
 const router = express.Router();
 
 //post a new user
-router.post("/", validateUser(), (req, res) => {
+router.post("/", validateUser, (req, res) => {
   Users.insert(req.body)
     .then(user => {
       res.status(201).json(user);
@@ -25,7 +25,7 @@ router.post("/", validateUser(), (req, res) => {
 });
 
 //post a new post to for a specific user
-router.post("/:id/posts", validatePost(), validateUserId(), (req, res) => {
+router.post("/:id/posts", validatePost, validateUserId, (req, res) => {
   const newPost = {
     text: req.body.text,
     user_id: req.params.id
@@ -57,12 +57,12 @@ router.get("/", (req, res) => {
 });
 
 //get user by id
-router.get("/:id", validateUserId(), (req, res) => {
+router.get("/:id", validateUserId, (req, res) => {
   res.json(req.user);
 });
 
 //get a specific user's posts
-router.get("/:id/posts", validateUserId(), (req, res) => {
+router.get("/:id/posts", validateUserId, (req, res) => {
   Users.getUserPosts(req.params.id)
     .then(posts => {
       if (posts.length > 0) {
@@ -82,14 +82,14 @@ router.get("/:id/posts", validateUserId(), (req, res) => {
 });
 
 //delete a user
-router.delete("/:id", validateUserId(), (req, res) => {
+router.delete("/:id", validateUserId, (req, res) => {
   Users.remove(req.params.id).then(user => {
     res.status(200).json({ message: "This user has been destroyed" });
   });
 });
 
 //update a user
-router.put("/:id", validateUser(), validateUserId(), (req, res) => {
+router.put("/:id", validateUser, validateUserId, (req, res) => {
   Users.update(req.params.id, req.body)
     .then(() => {
       Users.getById(req.params.id).then(user => res.json(user));

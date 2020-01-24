@@ -7,7 +7,7 @@ function validateUserId(req, res, next) {
       req.user = user;
       next();
     } else {
-      res.status(400).json({
+      res.status(404).json({
         message: "invalid user id"
       });
     }
@@ -47,7 +47,7 @@ function validatePostId(req, res, next) {
       req.post = post;
       next();
     } else {
-      res.status(400).json({
+      res.status(404).json({
         message: "Invalid post id"
       });
     }
